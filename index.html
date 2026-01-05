@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Planora | Task Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Modern Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ================= THEMES (NO BLUE) ================= */
+:root{
+    --bg:#f6f5f3;
+    --card:#ffffff;
+    --text:#1f2933;
+    --primary:#7c3aed;
+    --secondary:#ec4899;
+    --accent:#22c55e;
+    --muted:#6b7280;
+}
+[data-theme="peach"]{
+    --primary:#f97316;
+    --secondary:#fb7185;
+    --accent:#facc15;
+}
+[data-theme="sage"]{
+    --primary:#15803d;
+    --secondary:#4ade80;
+    --accent:#84cc16;
+}
+[data-theme="coffee"]{
+    --primary:#78350f;
+    --secondary:#d97706;
+    --accent:#f59e0b;
+}
+body.dark{
+    --bg:#0f0f11;
+    --card:#171717;
+    --text:#f5f5f5;
+    --muted:#a1a1aa;
+}
+
+/* ================= BASE ================= */
+*{box-sizing:border-box}
+body{
+    margin:0;
+    min-height:100vh;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    display:flex;
+    flex-direction:column;
+    transition:.3s ease;
+}
+
+/* ================= HEADER ================= */
+header{
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:white;
+    padding:14px 18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.controls{display:flex;gap:8px}
+header button,header select{
+    background:rgba(255,255,255,.25);
+    border:none;
+    color:white;
+    padding:6px 10px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+/* ================= MAIN ================= */
+main{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    padding:18px;
+}
+.card{
+    width:100%;
+    max-width:420px;
+    background:var(--card);
+    padding:20px;
+    border-radius:20px;
+    box-shadow:0 25px 50px rgba(0,0,0,.12);
+    animation:fadeIn .4s ease;
+}
+h2{text-align:center;margin-bottom:12px}
+
+/* ================= STATS ================= */
+.stats{
+    display:flex;
+    gap:8px;
+    margin-bottom:12px;
+}
+.stat{
+    flex:1;
+    padding:12px;
+    border-radius:14px;
+    text-align:center;
+    background:linear-gradient(135deg,
+        rgba(124,58,237,.12),
+        rgba(236,72,153,.1));
+    font-size:13px;
+    color:var(--muted);
+}
+.stat strong{
+    display:block;
+    font-size:20px;
+    color:var(--text);
+}
+
+/* ================= CARTOON PROGRESS ================= */
+.progress-wrap{margin-bottom:16px}
+.progress-bar{
+    height:14px;
+    background:#e5e7eb;
+    border-radius:20px;
+    overflow:hidden;
+}
+.progress{
+    height:100%;
+    width:0%;
+    border-radius:20px;
+    background:
+        repeating-linear-gradient(
+            45deg,
+            rgba(255,255,255,.35) 0,
+            rgba(255,255,255,.35) 10px,
+            rgba(255,255,255,.15) 10px,
+            rgba(255,255,255,.15) 20px
+        ),
+        linear-gradient(135deg,var(--primary),var(--accent));
+    position:relative;
+    animation:stripes 1s linear infinite;
+    transition:width .6s cubic-bezier(.34,1.56,.64,1);
+}
+.progress-face{
+    position:absolute;
+    right:-6px;
+    top:-18px;
+    font-size:20px;
+    animation:wiggle .6s ease;
+}
+
+/* ================= INPUT ================= */
+.input-group{
+    display:flex;
+    gap:8px;
+    margin-bottom:8px;
+}
+input{
+    flex:1;
+    padding:11px 12px;
+    border-radius:12px;
+    border:1px solid #e5e7eb;
+    font-family:inherit;
+}
+button.add{
+    width:100%;
+    margin-top:6px;
+    padding:12px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:white;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+/* ================= TASK LIST ================= */
+ul{list-style:none;padding:0;margin-top:16px}
+li{
+    background:var(--bg);
+    padding:14px;
+    border-radius:16px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    animation:slideUp .25s ease;
+}
+li.completed{opacity:.6;text-decoration:line-through}
+.task-text small{display:block;font-size:12px;color:var(--muted)}
+.actions button{
+    border:none;
+    border-radius:10px;
+    padding:6px 10px;
+    color:white;
+    cursor:pointer;
+    margin-left:6px;
+}
+.done{background:var(--accent)}
+.delete{background:#dc2626}
+
+/* ================= FOOTER ================= */
+footer{
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:white;
+    text-align:center;
+    padding:10px;
+    font-size:13px;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes slideUp{from{transform:translateY(10px);opacity:0}to{opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes stripes{from{background-position:0 0}to{background-position:40px 0}}
+@keyframes wiggle{
+    0%{transform:rotate(0)}
+    25%{transform:rotate(-10deg)}
+    50%{transform:rotate(10deg)}
+    100%{transform:rotate(0)}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <strong>Planora</strong>
+    <div class="controls">
+        <select onchange="changeTheme(this.value)">
+            <option value="">Default</option>
+            <option value="peach">Peach</option>
+            <option value="sage">Sage</option>
+            <option value="coffee">Coffee</option>
+        </select>
+        <button onclick="toggleDark()">🌙</button>
+    </div>
+</header>
+
+<main>
+<div class="card">
+    <h2>My Tasks</h2>
+
+    <div class="stats">
+        <div class="stat"><strong id="total">0</strong>Total</div>
+        <div class="stat"><strong id="completed">0</strong>Done</div>
+        <div class="stat"><strong id="pending">0</strong>Pending</div>
+    </div>
+
+    <div class="progress-wrap">
+        <div class="progress-bar">
+            <div class="progress" id="progress">
+                <span class="progress-face">😸</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <input id="taskText" placeholder="New task">
+        <input type="date" id="taskDate">
+    </div>
+
+    <button class="add" onclick="addTask()">Add Task</button>
+    <ul id="taskList"></ul>
+</div>
+</main>
+
+<footer>
+    © 2026 Planora | Designed by <strong>MEENAKSHI</strong>
+</footer>
+
+<script>
+const taskList=document.getElementById("taskList");
+
+document.addEventListener("DOMContentLoaded",()=>{
+    loadTasks();
+    if(localStorage.getItem("dark")==="on")document.body.classList.add("dark");
+    const theme=localStorage.getItem("theme");
+    if(theme)document.documentElement.setAttribute("data-theme",theme);
+    updateStats();
+});
+
+function changeTheme(t){
+    if(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem("theme",t);}
+    else{document.documentElement.removeAttribute("data-theme");localStorage.removeItem("theme");}
+}
+function toggleDark(){
+    document.body.classList.toggle("dark");
+    localStorage.setItem("dark",document.body.classList.contains("dark")?"on":"off");
+}
+function addTask(){
+    const text=taskText.value.trim(),date=taskDate.value;
+    if(!text)return;
+    const tasks=getTasks();
+    tasks.push({text,date,completed:false});
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+    renderTask({text,date,completed:false});
+    updateStats();
+    taskText.value="";taskDate.value="";
+}
+function renderTask(t){
+    const li=document.createElement("li");
+    if(t.completed)li.classList.add("completed");
+    li.innerHTML=`
+        <div class="task-text">
+            <strong>${t.text}</strong>
+            <small>Due: ${t.date||"No date"}</small>
+        </div>
+        <div class="actions">
+            <button class="done" onclick="toggleTask(this)">✓</button>
+            <button class="delete" onclick="deleteTask(this)">✕</button>
+        </div>`;
+    taskList.appendChild(li);
+}
+function toggleTask(b){b.closest("li").classList.toggle("completed");sync()}
+function deleteTask(b){b.closest("li").remove();sync()}
+function sync(){
+    const tasks=[];
+    document.querySelectorAll("#taskList li").forEach(li=>{
+        tasks.push({
+            text:li.querySelector("strong").innerText,
+            date:li.querySelector("small").innerText.replace("Due: ",""),
+            completed:li.classList.contains("completed")
+        });
+    });
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+    updateStats();
+}
+function loadTasks(){getTasks().forEach(renderTask)}
+function getTasks(){return JSON.parse(localStorage.getItem("tasks"))||[]}
+
+function updateStats(){
+    const tasks=getTasks();
+    const done=tasks.filter(t=>t.completed).length;
+    total.innerText=tasks.length;
+    completed.innerText=done;
+    pending.innerText=tasks.length-done;
+
+    const bar=document.getElementById("progress");
+    bar.style.width=tasks.length?(done/tasks.length)*100+"%":"0%";
+    bar.style.animation="none";bar.offsetHeight;bar.style.animation=null;
+}
+</script>
+
+</body>
+</html>
